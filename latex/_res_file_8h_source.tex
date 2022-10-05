@@ -1,0 +1,310 @@
+\hypertarget{_res_file_8h_source}{}\doxysection{Res\+File.\+h}
+\label{_res_file_8h_source}\index{C:/Projects/FEM/831\_finite\_element\_modeling/GUI/source/GUI/ResFile.h@{C:/Projects/FEM/831\_finite\_element\_modeling/GUI/source/GUI/ResFile.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{2 }
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#include "{}API\_FEM.h"{}}}
+\DoxyCodeLine{4 }
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include "{}../Project/ProjectFile.h"{}}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include <fstream>}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{keyword}{class }\mbox{\hyperlink{class_res_file}{ResFile}} \{}
+\DoxyCodeLine{12 \textcolor{keyword}{public}:}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14     \textcolor{keywordtype}{bool} Target(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* file\_path, \textcolor{keywordtype}{int} mode) \{}
+\DoxyCodeLine{15         \textcolor{keywordflow}{if} (file.is\_open()) }
+\DoxyCodeLine{16             file.close();}
+\DoxyCodeLine{17         file.open(file\_path, mode | std::ios::binary);}
+\DoxyCodeLine{18         this-\/>file\_path = file\_path;}
+\DoxyCodeLine{19         \textcolor{keywordflow}{return} file.is\_open();}
+\DoxyCodeLine{20     \}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22     \mbox{\hyperlink{class_res_file}{ResFile}}() \{\}}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24     \mbox{\hyperlink{class_res_file}{ResFile}}(\mbox{\hyperlink{class_res_file}{ResFile}}\&\& rf) \{}
+\DoxyCodeLine{25         file\_path = std::move(rf.file\_path);}
+\DoxyCodeLine{26         file = std::move(file);}
+\DoxyCodeLine{27     \}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29     \textcolor{keywordtype}{void} Close() \{}
+\DoxyCodeLine{30         file.flush();}
+\DoxyCodeLine{31         file.close();}
+\DoxyCodeLine{32     \}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34     \mbox{\hyperlink{class_res_file}{\string~ResFile}}() \{}
+\DoxyCodeLine{35         \textcolor{keywordflow}{if} (file.is\_open())}
+\DoxyCodeLine{36             file.close();}
+\DoxyCodeLine{37     \}}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39     \textcolor{keywordtype}{void} Save(\mbox{\hyperlink{class_proj_1_1_project}{Proj::Project}}\& project) \{}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41         \textcolor{comment}{//std::fstream file(file\_path, std::ios::ios\_base::app | std::ios::ios\_base::binary);}}
+\DoxyCodeLine{42         }
+\DoxyCodeLine{43         \textcolor{keywordflow}{if} (!file.is\_open()) \{}
+\DoxyCodeLine{44             std::cout << \textcolor{stringliteral}{"{}fail"{}};}
+\DoxyCodeLine{45         \}}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < 20; i++) \{}
+\DoxyCodeLine{48             \textcolor{keywordflow}{if} (i == 2) \{}
+\DoxyCodeLine{49                 \textcolor{keywordtype}{int}* field;}
+\DoxyCodeLine{50                 \textcolor{keywordtype}{size\_t} size;}
+\DoxyCodeLine{51                 get\_sample\_data(i, \textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{void}**\textcolor{keyword}{>}(\&field), size);}
+\DoxyCodeLine{52                 file.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{53                 file.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(field), size * \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{54             \}}
+\DoxyCodeLine{55             \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{56                 \textcolor{keywordtype}{double}* field;}
+\DoxyCodeLine{57                 \textcolor{keywordtype}{size\_t} size;}
+\DoxyCodeLine{58                 get\_sample\_data(i, \textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{void}**\textcolor{keyword}{>}(\&field), size);}
+\DoxyCodeLine{59                 file.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{60                 file.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(field), size * \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{61             \}}
+\DoxyCodeLine{62         \}}
+\DoxyCodeLine{63         \textcolor{keywordtype}{double} offset = project.get\_instrument\_controller().get\_total\_offset();}
+\DoxyCodeLine{64         file.write((\textcolor{keywordtype}{char}*)\&offset, \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66         \textcolor{keywordtype}{double} time =  project.get\_step\_controller().get\_total\_time();}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{68         file.write((\textcolor{keywordtype}{char}*)\&time, \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{69 }
+\DoxyCodeLine{70         \textcolor{keywordtype}{int} step =  project.get\_step\_controller().get\_step();}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72         file.write((\textcolor{keywordtype}{char}*)\&step,\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{73         \textcolor{comment}{//file.close();}}
+\DoxyCodeLine{74     \}}
+\DoxyCodeLine{75     \textcolor{keywordtype}{double} get\_total\_offset()\{}
+\DoxyCodeLine{76         \textcolor{keywordflow}{return} Offset;}
+\DoxyCodeLine{77     \}}
+\DoxyCodeLine{78     \textcolor{keywordtype}{int} get\_step()}
+\DoxyCodeLine{79     \{}
+\DoxyCodeLine{80         \textcolor{keywordflow}{return} Step;}
+\DoxyCodeLine{81     \}}
+\DoxyCodeLine{82     \textcolor{keywordtype}{double}  get\_total\_time()}
+\DoxyCodeLine{83     \{}
+\DoxyCodeLine{84         \textcolor{keywordflow}{return} Time;}
+\DoxyCodeLine{85     \}}
+\DoxyCodeLine{86     \textcolor{keywordtype}{void} SaveProfile()}
+\DoxyCodeLine{87     \{}
+\DoxyCodeLine{88         \textcolor{comment}{//std::ofstream file(file\_path, std::ios::ios\_base::binary);}}
+\DoxyCodeLine{89         \textcolor{keywordtype}{void}* ptr;}
+\DoxyCodeLine{90         \textcolor{keywordtype}{size\_t} size;}
+\DoxyCodeLine{91         get\_instrument\_data(1, ptr, size);}
+\DoxyCodeLine{92         file.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{93         file.write((\textcolor{keywordtype}{char}*)ptr,\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double})*size);}
+\DoxyCodeLine{94         \textcolor{comment}{//file.close();}}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96     \}}
+\DoxyCodeLine{97     \textcolor{keywordtype}{void} LoadProfile()}
+\DoxyCodeLine{98     \{}
+\DoxyCodeLine{99         \textcolor{comment}{//std::ifstream file(file\_path, std::ios::ios\_base::binary);}}
+\DoxyCodeLine{100         \textcolor{keywordtype}{char}* ptr;}
+\DoxyCodeLine{101         \textcolor{keywordtype}{size\_t} size;}
+\DoxyCodeLine{102         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{size\_t}));}
+\DoxyCodeLine{103         Profile.resize(size);}
+\DoxyCodeLine{104         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Profile[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double})*size);}
+\DoxyCodeLine{105         \textcolor{comment}{//file.close();}}
+\DoxyCodeLine{106 }
+\DoxyCodeLine{107     \}}
+\DoxyCodeLine{108     \textcolor{keywordtype}{bool} Load() \{}
+\DoxyCodeLine{109         \textcolor{comment}{//static std::ifstream file(file\_path, std::ios::ios\_base::binary);}}
+\DoxyCodeLine{110 }
+\DoxyCodeLine{111         \textcolor{keywordtype}{size\_t} size = 0;}
+\DoxyCodeLine{112         }
+\DoxyCodeLine{113         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{114         \textcolor{keywordflow}{if} (file.eof()) \{}
+\DoxyCodeLine{115             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{116         \}}
+\DoxyCodeLine{117         MeshX.resize(size);}
+\DoxyCodeLine{118         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&MeshX[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{120         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{121         MeshY.resize(size);}
+\DoxyCodeLine{122         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&MeshY[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{123 }
+\DoxyCodeLine{124         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{125         IJK.resize(size);}
+\DoxyCodeLine{126         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&IJK[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}) * size);}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{128         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{129         MeshZ.resize(size);}
+\DoxyCodeLine{130         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&MeshZ[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{132         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{133         Eum.resize(size);}
+\DoxyCodeLine{134         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Eum[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{135 }
+\DoxyCodeLine{136         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{137         Ecp.resize(size);}
+\DoxyCodeLine{138         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Ecp[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{139 }
+\DoxyCodeLine{140         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{141         Exx.resize(size);}
+\DoxyCodeLine{142         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Exx[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{143 }
+\DoxyCodeLine{144         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{145         Eyy.resize(size);}
+\DoxyCodeLine{146         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Eyy[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{147 }
+\DoxyCodeLine{148         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{149         Exy.resize(size);}
+\DoxyCodeLine{150         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Exy[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{151 }
+\DoxyCodeLine{152         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{153         Exz.resize(size);}
+\DoxyCodeLine{154         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Exz[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{156         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{157         Eyz.resize(size);}
+\DoxyCodeLine{158         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Eyz[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{159 }
+\DoxyCodeLine{160         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{161         Ezz.resize(size);}
+\DoxyCodeLine{162         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Ezz[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{163 }
+\DoxyCodeLine{164         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{165         Dum.resize(size);}
+\DoxyCodeLine{166         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Dum[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{167 }
+\DoxyCodeLine{168 }
+\DoxyCodeLine{169         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{170         Sost.resize(size);}
+\DoxyCodeLine{171         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Sost[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{172 }
+\DoxyCodeLine{173         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{174         Dxx.resize(size);}
+\DoxyCodeLine{175         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Dxx[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{178         Dyy.resize(size);}
+\DoxyCodeLine{179         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Dyy[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{180 }
+\DoxyCodeLine{181         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{182         Dxy.resize(size);}
+\DoxyCodeLine{183         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Dxy[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{184 }
+\DoxyCodeLine{185         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{186         Dxz.resize(size);}
+\DoxyCodeLine{187         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Dxz[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{188 }
+\DoxyCodeLine{189         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{190         Dyz.resize(size);}
+\DoxyCodeLine{191         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Dyz[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{192 }
+\DoxyCodeLine{193         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size), \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{194         Dzz.resize(size);}
+\DoxyCodeLine{195         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Dzz[0]), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}) * size);}
+\DoxyCodeLine{196 }
+\DoxyCodeLine{197 }
+\DoxyCodeLine{198         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Offset), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{199 }
+\DoxyCodeLine{200         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Time), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{201 }
+\DoxyCodeLine{202         file.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&Step), \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{203         \textcolor{keywordflow}{return} !file.eof();}
+\DoxyCodeLine{204     \}}
+\DoxyCodeLine{205 }
+\DoxyCodeLine{206 }
+\DoxyCodeLine{207     \textcolor{keyword}{enum class} SampleFields \{}
+\DoxyCodeLine{208         X,}
+\DoxyCodeLine{209         Y,}
+\DoxyCodeLine{210         Order,}
+\DoxyCodeLine{211         Z,}
+\DoxyCodeLine{212         Eum,}
+\DoxyCodeLine{213         Ecp,}
+\DoxyCodeLine{214         Exx, Eyy, Exy, Exz, Eyz, Ezz,}
+\DoxyCodeLine{215         Dum,}
+\DoxyCodeLine{216         Sost,}
+\DoxyCodeLine{217         Dxx, Dyy, Dxy, Dxz, Dyz, Dzz}
+\DoxyCodeLine{218     \};}
+\DoxyCodeLine{219     \textcolor{keyword}{enum class} InstrumentFields \{}
+\DoxyCodeLine{220         Offset,}
+\DoxyCodeLine{221         Profile}
+\DoxyCodeLine{222     \};}
+\DoxyCodeLine{223 }
+\DoxyCodeLine{224 }
+\DoxyCodeLine{225 }
+\DoxyCodeLine{226 \textcolor{preprocessor}{\#define ExtractField(enum, fieldname)\(\backslash\)}}
+\DoxyCodeLine{227 \textcolor{preprocessor}{case SampleFields::enum:\(\backslash\)}}
+\DoxyCodeLine{228 \textcolor{preprocessor}{    field\_ptr = (void*)fieldname.data();\(\backslash\)}}
+\DoxyCodeLine{229 \textcolor{preprocessor}{    field\_info = fieldname.size();\(\backslash\)}}
+\DoxyCodeLine{230 \textcolor{preprocessor}{    break;}}
+\DoxyCodeLine{231 }
+\DoxyCodeLine{232 }
+\DoxyCodeLine{233 }
+\DoxyCodeLine{234     \textcolor{keywordtype}{void} GetSampleData(\textcolor{keywordtype}{int} field\_, \textcolor{keywordtype}{void}** field\_ptr\_ptr, \textcolor{keywordtype}{size\_t}\& field\_info) \{}
+\DoxyCodeLine{235         \textcolor{keyword}{auto} field\_ptr = *field\_ptr\_ptr;}
+\DoxyCodeLine{236         SampleFields field = \textcolor{keyword}{static\_cast<}SampleFields\textcolor{keyword}{>}(field\_);}
+\DoxyCodeLine{237         \textcolor{keywordflow}{switch} (field)}
+\DoxyCodeLine{238         \{}
+\DoxyCodeLine{239             ExtractField(X, MeshX);}
+\DoxyCodeLine{240             ExtractField(Y, MeshY);}
+\DoxyCodeLine{241             ExtractField(Order, IJK);}
+\DoxyCodeLine{242             ExtractField(Z, MeshZ);}
+\DoxyCodeLine{243             ExtractField(Eum, Eum);}
+\DoxyCodeLine{244             ExtractField(Ecp, Ecp);}
+\DoxyCodeLine{245             ExtractField(Exx, Exx);}
+\DoxyCodeLine{246             ExtractField(Eyy, Eyy);}
+\DoxyCodeLine{247             ExtractField(Exy, Exy);}
+\DoxyCodeLine{248             ExtractField(Exz, Exz);}
+\DoxyCodeLine{249             ExtractField(Eyz, Eyz);}
+\DoxyCodeLine{250             ExtractField(Ezz, Ezz);}
+\DoxyCodeLine{251             ExtractField(Dum, Dum);}
+\DoxyCodeLine{252             ExtractField(Sost, Sost);}
+\DoxyCodeLine{253             ExtractField(Dxx, Dxx);}
+\DoxyCodeLine{254             ExtractField(Dyy, Dyy);}
+\DoxyCodeLine{255             ExtractField(Dxy, Dxy);}
+\DoxyCodeLine{256             ExtractField(Dxz, Dxz);}
+\DoxyCodeLine{257             ExtractField(Dyz, Dyz);}
+\DoxyCodeLine{258             ExtractField(Dzz, Dzz);}
+\DoxyCodeLine{259         \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{260             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{261         \}}
+\DoxyCodeLine{262 }
+\DoxyCodeLine{263         *field\_ptr\_ptr = field\_ptr;}
+\DoxyCodeLine{264     \}}
+\DoxyCodeLine{265 }
+\DoxyCodeLine{266 }
+\DoxyCodeLine{267 }
+\DoxyCodeLine{268     \textcolor{keywordtype}{void} GetInstrumentData(\textcolor{keywordtype}{int} field\_, \textcolor{keywordtype}{void}*\& field\_ptr, \textcolor{keywordtype}{size\_t}\& field\_info) \{}
+\DoxyCodeLine{269         InstrumentFields field = InstrumentFields(field\_);}
+\DoxyCodeLine{270         \textcolor{keywordflow}{switch} (field)}
+\DoxyCodeLine{271         \{}
+\DoxyCodeLine{272         \textcolor{keywordflow}{case} InstrumentFields::Offset:}
+\DoxyCodeLine{273             *\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{double}*\textcolor{keyword}{>}(field\_ptr) = Offset;}
+\DoxyCodeLine{274             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{275         \textcolor{keywordflow}{case} InstrumentFields::Profile:}
+\DoxyCodeLine{276             field\_ptr = (\textcolor{keywordtype}{void}*)Profile.data();}
+\DoxyCodeLine{277             field\_info = Profile.size();}
+\DoxyCodeLine{278             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{279         \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{280             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{281         \}}
+\DoxyCodeLine{282 }
+\DoxyCodeLine{283     \}}
+\DoxyCodeLine{284 }
+\DoxyCodeLine{285 \textcolor{keyword}{private}:}
+\DoxyCodeLine{286     std::vector<double> MeshX;}
+\DoxyCodeLine{287     std::vector<double> MeshY;}
+\DoxyCodeLine{288     std::vector<int> IJK;}
+\DoxyCodeLine{289     std::vector<double> MeshZ;}
+\DoxyCodeLine{290     std::vector<double> Eum,}
+\DoxyCodeLine{291         Ecp,}
+\DoxyCodeLine{292         Exx, Eyy, Exy, Exz, Eyz, Ezz,}
+\DoxyCodeLine{293         Dum,}
+\DoxyCodeLine{294         Sost,}
+\DoxyCodeLine{295         Dxx, Dyy, Dxy, Dxz, Dyz, Dzz;}
+\DoxyCodeLine{296 }
+\DoxyCodeLine{297     std::vector<double> Profile;}
+\DoxyCodeLine{298     \textcolor{keywordtype}{double} Offset = 0.0;}
+\DoxyCodeLine{299     \textcolor{keywordtype}{double} Time = 0.0;}
+\DoxyCodeLine{300     \textcolor{keywordtype}{int} Step = 0;}
+\DoxyCodeLine{301 }
+\DoxyCodeLine{302     std::fstream file;}
+\DoxyCodeLine{303     std::string file\_path;}
+\DoxyCodeLine{304 \};}
+
+\end{DoxyCode}
